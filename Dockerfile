@@ -8,8 +8,8 @@ ENV DEBIAN_FRONTEND=noninteractive \
     IREDMAIL_VERSION=1.7.1
 
 # Update system and install minimal prerequisites for iRedMail installer
-RUN apt-get update && apt-get install -y \
-    wget gzip dialog tar && \
+RUN apt-get update && apt-get install -y ca-certificates && update-ca-certificates \
+    wget gzip dialog tar supervisor && \
     apt-get clean
 
 # Download and extract iRedMail
