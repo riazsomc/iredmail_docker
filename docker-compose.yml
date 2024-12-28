@@ -32,6 +32,7 @@ services:
       - /iredmail_docker/roundcube/config:/opt/www/roundcubemail/config
       - /iredmail_docker/mail:/var/mail
       - /iredmail_docker/amavis:/etc/amavis
+      - /etc/letsencrypt/live/mail.w3datanet.com:/etc/ssl/certs:ro
     depends_on:
       - mariadb
       - rspamd
