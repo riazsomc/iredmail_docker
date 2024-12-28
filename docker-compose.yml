@@ -16,6 +16,7 @@ services:
       - "110:110"     # POP3
       - "995:995"     # POP3S
       - "8080:80"     # Webmail (Roundcube)
+      - "4443:443"    # Webmail (Roundcube)
     environment:
       MYSQL_HOST: mariadb
       MYSQL_ROOT_PASSWORD: MySQLRootPassword
