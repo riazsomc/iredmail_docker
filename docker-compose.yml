@@ -1,0 +1,59 @@
+version: '3.8'
+
+services:
+  iredmail:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: iredmail
+    hostname: mail.w3datanet.com
+    ports:
+      - "25:25"       # SMTP
+      - "143:143"     # IMAP
+      - "993:993"     # IMAPS
+      - "465:465"     # SMTPS
+      - "587:587"     # Submission
+      - "110:110"     # POP3
+      - "995:995"     # POP3S
+      - "8080:80"     # Webmail (Roundcube)
+    environment:
+      MYSQL_HOST: mariadb
+      MYSQL_ROOT_PASSWORD: MySQLRootPassword
+      MYSQL_DATABASE: iredmail
+      MYSQL_USER: iredmail_user
+      MYSQL_PASSWORD: MySQLIredmailPassword
+    volumes:
+      - /iredmail_docker/postfix:/etc/postfix
+      - /iredmail_docker/dovecot:/etc/dovecot
+      - /iredmail_docker/rspamd:/etc/rspamd
+      - /iredmail_docker/dkimkeys:/var/lib/dkim
+      - /iredmail_docker/roundcube/skins:/opt/www/roundcubemail/skins
+      - /iredmail_docker/roundcube/plugins:/opt/www/roundcubemail/plugins
+      - /iredmail_docker/roundcube/config:/opt/www/roundcubemail/config
+      - /iredmail_docker/mail:/var/mail
+      - /iredmail_docker/amavis:/etc/amavis
+    depends_on:
+      - mariadb
+      - rspamd
+
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: iredmail
+      MYSQL_USER: iredmail_user
+      MYSQL_PASSWORD: iredmail_password
+    volumes:
+      - /iredmail_docker/mariadb-data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+
+  rspamd:
+    image: rspamd/rspamd:latest
+    container_name: rspamd
+    volumes:
+      - /iredmail_docker/rspamd:/etc/rspamd
+    ports:
+      - "11334:11334"  # Rspamd web interface (optional, for monitoring)
+    restart: unless-stopped
